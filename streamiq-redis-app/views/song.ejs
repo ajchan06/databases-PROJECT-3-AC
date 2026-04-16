@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamIQ — Edit Song</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #1f2d40 0%, #0d1b2a 100%); border-bottom: 1px solid #30363d; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.8rem; color: #58a6ff; }
+    .container { max-width: 600px; margin: 40px auto; padding: 0 24px; }
+    .back { color: #58a6ff; text-decoration: none; font-size: 0.9rem; display: inline-block; margin-bottom: 24px; }
+    .back:hover { text-decoration: underline; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; }
+    .card-header { background: #1c2128; border-bottom: 1px solid #30363d; padding: 16px 20px; font-size: 1rem; font-weight: 600; }
+    .card-body { padding: 24px; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .stat { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 14px; text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 700; color: #58a6ff; }
+    .stat-label { color: #8b949e; font-size: 0.8rem; margin-top: 4px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.8rem; color: #8b949e; margin-bottom: 5px; }
+    .form-group input { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #e6edf3; padding: 9px 12px; border-radius: 6px; font-size: 0.9rem; }
+    .form-group input:focus { outline: none; border-color: #58a6ff; }
+    .btn-submit { background: #1f6feb; border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; width: 100%; font-weight: 500; }
+    .btn-submit:hover { background: #388bfd; }
+    .btn-danger { background: transparent; border: 1px solid #f85149; color: #f85149; padding: 9px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; width: 100%; margin-top: 8px; }
+    .btn-danger:hover { background: #f85149; color: white; }
+    .redis-hint { background: #1c2128; border: 1px solid #30363d; border-radius: 6px; padding: 10px 14px; margin-top: 16px; font-size: 0.78rem; color: #8b949e; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <header><h1>🎵 StreamIQ</h1><span style="color:#8b949e;font-size:0.9rem">Song Detail</span></header>
+  <div class="container">
+    <a href="/" class="back">← Back to Leaderboard</a>
+
+    <div class="card">
+      <div class="card-header">🎵 Song #<%= songId %> — <%= meta.title || 'Unknown' %></div>
+      <div class="card-body">
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value"><%= plays %></div>
+            <div class="stat-label">Total Plays</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">#<%= rank %></div>
+            <div class="stat-label">Leaderboard Rank</div>
+          </div>
+        </div>
+
+        <form method="POST" action="/songs/<%= songId %>/edit">
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" name="title" value="<%= meta.title || '' %>" required>
+          </div>
+          <div class="form-group">
+            <label>Artist Name</label>
+            <input type="text" name="artistName" value="<%= meta.artistName || '' %>" required>
+          </div>
+          <div class="form-group">
+            <label>Album Title</label>
+            <input type="text" name="albumTitle" value="<%= meta.albumTitle || '' %>">
+          </div>
+          <div class="form-group">
+            <label>Duration (seconds)</label>
+            <input type="number" name="duration" value="<%= meta.duration || '' %>">
+          </div>
+          <button type="submit" class="btn-submit">💾 Update Metadata (HSET)</button>
+        </form>
+
+        <form method="POST" action="/songs/<%= songId %>/delete" onsubmit="return confirm('Remove this song from the leaderboard?')">
+          <button type="submit" class="btn-danger">🗑 Delete from Leaderboard (ZREM + DEL)</button>
+        </form>
+
+        <div class="redis-hint">
+          HGETALL song:<%= songId %><br>
+          ZSCORE topSongs "<%= songId %>"<br>
+          ZREVRANK topSongs "<%= songId %>"
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

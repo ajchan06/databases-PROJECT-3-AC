@@ -1,0 +1,15 @@
+{
+  "name": "streamiq-redis-app",
+  "version": "1.0.0",
+  "description": "StreamIQ Project 3 - Node + Express + Redis leaderboard",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "redis": "^4.6.10",
+    "ejs": "^3.1.9"
+  }
+}

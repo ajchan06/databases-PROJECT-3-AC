@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamIQ — Top Songs Leaderboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+
+    header {
+      background: linear-gradient(135deg, #1f2d40 0%, #0d1b2a 100%);
+      border-bottom: 1px solid #30363d;
+      padding: 20px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    header h1 { font-size: 1.8rem; color: #58a6ff; letter-spacing: -0.5px; }
+    header span { color: #8b949e; font-size: 0.9rem; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+    .flash {
+      background: #1c3a2a; border: 1px solid #2ea043; color: #3fb950;
+      padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 0.9rem;
+    }
+
+    .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+
+    .card {
+      background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden;
+    }
+    .card-header {
+      background: #1c2128; border-bottom: 1px solid #30363d;
+      padding: 16px 20px; font-size: 1rem; font-weight: 600; color: #e6edf3;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-body { padding: 20px; }
+
+    /* Leaderboard */
+    .leaderboard-table { width: 100%; border-collapse: collapse; }
+    .leaderboard-table th {
+      text-align: left; padding: 10px 12px; font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 0.05em; color: #8b949e; border-bottom: 1px solid #30363d;
+    }
+    .leaderboard-table td { padding: 12px; border-bottom: 1px solid #21262d; vertical-align: middle; }
+    .leaderboard-table tr:last-child td { border-bottom: none; }
+    .leaderboard-table tr:hover td { background: #1c2128; }
+
+    .rank-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 0.85rem;
+    }
+    .rank-1 { background: #b8860b; color: #fff; }
+    .rank-2 { background: #808080; color: #fff; }
+    .rank-3 { background: #cd7f32; color: #fff; }
+    .rank-other { background: #21262d; color: #8b949e; }
+
+    .song-title { font-weight: 600; color: #e6edf3; font-size: 0.95rem; }
+    .song-meta { color: #8b949e; font-size: 0.8rem; margin-top: 2px; }
+    .plays-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .plays-bar { height: 6px; background: #58a6ff; border-radius: 3px; min-width: 4px; transition: width 0.3s; }
+    .plays-count { color: #58a6ff; font-weight: 600; font-size: 0.9rem; min-width: 32px; }
+
+    .btn-play {
+      background: #238636; border: none; color: white; padding: 6px 14px;
+      border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 500;
+    }
+    .btn-play:hover { background: #2ea043; }
+    .btn-danger {
+      background: transparent; border: 1px solid #f85149; color: #f85149;
+      padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+    }
+    .btn-danger:hover { background: #f85149; color: white; }
+    .btn-secondary {
+      background: #21262d; border: 1px solid #30363d; color: #e6edf3;
+      padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+    }
+    .btn-secondary:hover { background: #30363d; }
+    .btn-reset {
+      background: #6e40c9; border: none; color: white; padding: 8px 18px;
+      border-radius: 6px; cursor: pointer; font-size: 0.85rem; width: 100%;
+    }
+    .btn-reset:hover { background: #8957e5; }
+
+    /* Forms */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.8rem; color: #8b949e; margin-bottom: 5px; }
+    .form-group input, .form-group select {
+      width: 100%; background: #0d1117; border: 1px solid #30363d; color: #e6edf3;
+      padding: 8px 12px; border-radius: 6px; font-size: 0.9rem;
+    }
+    .form-group input:focus { outline: none; border-color: #58a6ff; }
+    .btn-submit {
+      background: #1f6feb; border: none; color: white; padding: 9px 20px;
+      border-radius: 6px; cursor: pointer; font-size: 0.9rem; width: 100%; font-weight: 500;
+    }
+    .btn-submit:hover { background: #388bfd; }
+
+    .detail-link { color: #58a6ff; font-size: 0.8rem; text-decoration: none; }
+    .detail-link:hover { text-decoration: underline; }
+
+    .divider { border: none; border-top: 1px solid #30363d; margin: 20px 0; }
+
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎵 StreamIQ</h1>
+    <span>Redis Leaderboard — Project 3</span>
+  </header>
+
+  <div class="container">
+    <% if (message) { %>
+      <div class="flash">✓ <%= message %></div>
+    <% } %>
+
+    <div class="grid">
+      <!-- Leaderboard -->
+      <div class="card">
+        <div class="card-header">🏆 Top Songs Leaderboard <span style="color:#8b949e;font-size:0.8rem;font-weight:400;margin-left:auto">Redis Sorted Set · topSongs</span></div>
+        <div class="card-body" style="padding:0">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Song</th>
+                <th>Plays</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% const maxPlays = leaderboard.length > 0 ? leaderboard[0].plays : 1; %>
+              <% leaderboard.forEach(song => { %>
+              <tr>
+                <td>
+                  <span class="rank-badge <%= song.rank <= 3 ? 'rank-' + song.rank : 'rank-other' %>">
+                    <%= song.rank %>
+                  </span>
+                </td>
+                <td>
+                  <div class="song-title"><%= song.title %></div>
+                  <div class="song-meta"><%= song.artistName %> · <%= song.albumTitle %></div>
+                </td>
+                <td>
+                  <div class="plays-bar-wrap">
+                    <div class="plays-bar" style="width:<%= Math.max(4, Math.round((song.plays / maxPlays) * 80)) %>px"></div>
+                    <span class="plays-count"><%= song.plays %></span>
+                  </div>
+                </td>
+                <td style="white-space:nowrap">
+                  <form method="POST" action="/play/<%= song.songId %>" style="display:inline">
+                    <button class="btn-play" type="submit">▶ Play</button>
+                  </form>
+                  <a href="/songs/<%= song.songId %>" class="btn-secondary" style="display:inline-block;margin-left:4px;text-decoration:none;padding:6px 10px">Edit</a>
+                  <form method="POST" action="/songs/<%= song.songId %>/delete" style="display:inline;margin-left:4px" onsubmit="return confirm('Remove this song from leaderboard?')">
+                    <button class="btn-danger" type="submit">✕</button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div>
+        <!-- Add Song -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header">➕ Add Song to Leaderboard</div>
+          <div class="card-body">
+            <form method="POST" action="/songs">
+              <div class="form-group">
+                <label>Song ID</label>
+                <input type="text" name="songId" placeholder="e.g. 1021" required>
+              </div>
+              <div class="form-group">
+                <label>Title</label>
+                <input type="text" name="title" placeholder="Song title" required>
+              </div>
+              <div class="form-group">
+                <label>Artist Name</label>
+                <input type="text" name="artistName" placeholder="Artist" required>
+              </div>
+              <div class="form-group">
+                <label>Album Title</label>
+                <input type="text" name="albumTitle" placeholder="Album">
+              </div>
+              <div class="form-group">
+                <label>Duration (seconds)</label>
+                <input type="number" name="duration" placeholder="180">
+              </div>
+              <div class="form-group">
+                <label>Initial Play Count</label>
+                <input type="number" name="initialPlays" placeholder="0" value="0">
+              </div>
+              <button type="submit" class="btn-submit">Add to Leaderboard</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Quick Play -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header">▶ Quick Play — Log a Play</div>
+          <div class="card-body">
+            <form method="POST" id="quickPlayForm">
+              <div class="form-group">
+                <label>Select Song</label>
+                <select name="songId" id="quickPlaySelect">
+                  <% allSongs.forEach(s => { %>
+                    <option value="<%= s.id %>"><%= s.title %> — <%= s.artistName %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <button type="submit" class="btn-submit" style="background:#238636">▶ Log Play (ZINCRBY)</button>
+            </form>
+            <script>
+              document.getElementById('quickPlayForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const id = document.getElementById('quickPlaySelect').value;
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/play/' + id;
+                document.body.appendChild(form);
+                form.submit();
+              });
+            </script>
+          </div>
+        </div>
+
+        <!-- Reset -->
+        <div class="card">
+          <div class="card-header">⚙️ Database Controls</div>
+          <div class="card-body">
+            <form method="POST" action="/reset" onsubmit="return confirm('Reset and reseed all Redis data?')">
+              <button type="submit" class="btn-reset">🔄 FLUSHALL + Reseed</button>
+            </form>
+            <p style="color:#8b949e;font-size:0.75rem;margin-top:10px">Runs FLUSHALL and reseeds with Project 2 song data</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
