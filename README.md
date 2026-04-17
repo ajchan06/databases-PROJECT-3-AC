@@ -4,7 +4,9 @@
 
 StreamIQ is a music streaming platform. This project extends the MongoDB database from Project 2 with a **Redis in-memory key-value store** for real-time song play tracking and leaderboard functionality.
 
-> **AI Usage:** AI tools (Claude by Anthropic) were used to assist with generating boilerplate code, structuring Redis commands documentation, and drafting README content.
+## AI Disclosure
+
+AI (Claude by Anthropic, including Claude Code) was used to help structure the documentation and README. All design decisions, Redis data structure choices, and code logic are our own.
 
 ---
 
