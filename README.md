@@ -4,7 +4,10 @@
 
 StreamIQ is a music streaming platform. This project extends the MongoDB database from Project 2 with a **Redis in-memory key-value store** for real-time song play tracking and leaderboard functionality.
 
-**Demo video:** _[link to be added — 6–10 min walkthrough with camera on and narration]_
+**Demo video:** https://youtu.be/NoPfgE4spsE
+
+uml diagram url: https://lucid.app/lucidchart/c9bd40e4-83f2-448a-9769-c81f1e9cafdc/edit?invitationId=inv_4d8b1b3d-a69b-47f9-8abd-9f3148d1c77b&page=0_0#
+
 
 ---
 
