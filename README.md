@@ -4,15 +4,13 @@
 
 StreamIQ is a music streaming platform. This project extends the MongoDB database from Project 2 with a **Redis in-memory key-value store** for real-time song play tracking and leaderboard functionality.
 
-## AI Disclosure
-
-AI (Claude by Anthropic, including Claude Code) was used to help structure the documentation and README. All design decisions, Redis data structure choices, and code logic are our own.
+**Demo video:** _[link to be added — 6–10 min walkthrough with camera on and narration]_
 
 ---
 
-## Video Demonstration
+## AI Disclosure
 
-🎥 _[Add your video link here after recording]_
+Claude AI was used to help structure the documentation and README. All design decisions, Redis data structure choices, and code logic are our own.
 
 ---
 
@@ -213,3 +211,13 @@ Open **http://localhost:3000**
 | Templating | EJS |
 | In-memory store | Redis (ioredis / node-redis v4) |
 | Document database | MongoDB (Project 2, not extended in P3) |
+
+---
+
+## Suggested GitHub "About" Blurb
+
+Paste this into the repo's **About** sidebar on GitHub (right-hand side of the repo page → gear icon):
+
+> **Description:** CS3200 Project 3 — StreamIQ Redis extension. A Node + Express + Redis app that powers a real-time "Top Songs" leaderboard using a Redis Sorted Set (`topSongs`) plus a Hash metadata cache (`song:{id}`), with full CRUD.
+
+> **Topics:** `cs3200`, `redis`, `nodejs`, `express`, `ejs`, `sorted-set`, `leaderboard`, `key-value-store`, `in-memory-database`, `northeastern`
