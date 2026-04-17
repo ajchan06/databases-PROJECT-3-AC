@@ -84,8 +84,8 @@ async function seedData() {
 // GET / — Home: leaderboard
 app.get('/', async (req, res) => {
   try {
-    // ZREVRANGE: top 10 songs highest score first
-    const entries = await redis.zRangeWithScores('topSongs', 0, 9, { REV: true });
+    // ZREVRANGE 0..-1: every song on the leaderboard, highest score first
+    const entries = await redis.zRangeWithScores('topSongs', 0, -1, { REV: true });
 
     // Enrich each entry with song metadata from Hash
     const leaderboard = await Promise.all(entries.map(async ({ value: songId, score }, index) => {
