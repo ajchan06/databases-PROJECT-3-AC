@@ -60,11 +60,7 @@ See `docs/P3_Requirements.docx` for the full requirements document and UML (reus
 
 ### Sorted Set: `topSongs`
 
-```
-Key: "topSongs"
-Members: song IDs (strings, e.g. "1001")
-Scores:  total play count (integer)
-```
+> **To implement the global Top Songs leaderboard I will use a Redis sorted set with key `topSongs`, song IDs as the values, and a score of the number of plays of the song.**
 
 **Example state:**
 ```
@@ -75,10 +71,7 @@ Scores:  total play count (integer)
 
 ### Hash: `song:{songID}`
 
-```
-Key:    "song:1001"
-Fields: title, artistName, albumTitle, duration
-```
+> **To cache song metadata for leaderboard rendering I will use a Redis hash with key `song:{songID}`, storing `title`, `artistName`, `albumTitle`, and `duration` as fields.**
 
 **Example:**
 ```
