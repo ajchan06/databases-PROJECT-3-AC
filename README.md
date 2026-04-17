@@ -86,56 +86,67 @@ song:1001
 
 ## Part 3 — Redis Commands (Full CRUD)
 
+Each command is paired with the concrete StreamIQ use case it serves.
+
 ### Initialize
 ```bash
+# Wipe all Redis data before reseeding the StreamIQ demo catalog
 FLUSHALL
+
+# Seed the metadata cache for song 1001 ("Midnight Rain" by Aurora Wave)
 HSET song:1001 title "Midnight Rain" artistName "Aurora Wave" albumTitle "Dreamscape" duration "234"
+
+# Seed the global leaderboard with starter play counts for three songs
 ZADD topSongs 14 "1001" 11 "1008" 9 "1003"
 ```
 
 ### Create
 ```bash
-# Add a new song to the leaderboard
+# When a brand-new song 1021 ("Moonrise" by Luna Park) is added to the catalog,
+# insert it onto the leaderboard with zero plays so it can start being ranked
 ZADD topSongs 0 "1021"
+
+# And cache its metadata so the leaderboard can render it without hitting MongoDB
 HSET song:1021 title "Moonrise" artistName "Luna Park" albumTitle "Starlight" duration "232"
 ```
 
 ### Read
 ```bash
-# Top 10 songs (highest plays first) with scores
+# When a user opens the StreamIQ home page: fetch the top 10 songs, highest plays first
 ZREVRANGE topSongs 0 9 WITHSCORES
 
-# Play count for one song
+# When rendering a song's detail page: get its current play count
 ZSCORE topSongs "1001"
 
-# Rank of a song (0 = #1)
+# When rendering a song's detail page: get its leaderboard rank (0 = #1)
 ZREVRANK topSongs "1001"
 
-# All metadata for a song
+# When rendering a leaderboard row for song 1001: pull all cached metadata
 HGETALL song:1001
 
-# One metadata field
+# When only the song's title is needed (e.g. a compact notification)
 HGET song:1001 title
 ```
 
 ### Update
 ```bash
-# Log a play (increment score by 1)
+# When user duto_guerra plays "Midnight Rain" (song 1001) one more time,
+# increment its leaderboard score by 1 atomically
 ZINCRBY topSongs 1 "1001"
 
-# Update cached metadata
+# When an admin corrects a typo in the cached artist name for song 1001
 HSET song:1001 artistName "Aurora Wave"
 ```
 
 ### Delete
 ```bash
-# Remove song from leaderboard
+# When song 1001 is pulled from the catalog: remove it from the leaderboard
 ZREM topSongs "1001"
 
-# Delete metadata cache
+# And evict its metadata from the Redis cache
 DEL song:1001
 
-# Wipe everything
+# When resetting the demo environment before a fresh seed run
 FLUSHALL
 ```
 
