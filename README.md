@@ -34,15 +34,19 @@ AI (Claude by Anthropic, including Claude Code) was used to help structure the d
 ## Repository Structure
 
 ```
-databases-Project-3-AC/
-├── streamiq-redis-app/       # Node + Express + Redis application
-│   ├── app.js                # Main server — all routes
+databases-PROJECT-3-AC/
+├── streamiq-redis-app/          # Node + Express + Redis application
+│   ├── app.js                   # Main server — all routes
 │   ├── package.json
 │   └── views/
-│       ├── index.ejs         # Leaderboard home page
-│       └── song.ejs          # Song detail / edit page
-├── docs/
-│   └── P3_Requirements.docx  # Requirements + Redis data structures + commands
+│       ├── index.ejs            # Leaderboard home page
+│       └── song.ejs             # Song detail / edit page
+├── docs-project-3/
+│   ├── requirements.pdf         # Problem statement + nouns/verbs breakdown
+│   ├── uml-class-diagram.png    # Conceptual UML class diagram
+│   └── erd-mongo.png            # Project 2 MongoDB ERD (reused context)
+├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
@@ -50,7 +54,10 @@ databases-Project-3-AC/
 
 ## Part 1 — Requirements
 
-See `docs/P3_Requirements.docx` for the full requirements document and UML (reused from Project 2).
+The full requirements document (problem statement, database rules, and nouns/verbs breakdown reused from Project 2) lives in [docs-project-3/requirements.pdf](docs-project-3/requirements.pdf). The conceptual model is captured in two diagrams:
+
+- [docs-project-3/uml-class-diagram.png](docs-project-3/uml-class-diagram.png) — UML class diagram
+- [docs-project-3/erd-mongo.png](docs-project-3/erd-mongo.png) — Project 2 MongoDB ERD, kept for reference
 
 **Redis addition:** StreamIQ uses Redis to power a real-time "Top Songs" leaderboard. Every play event increments a song's score atomically in a Sorted Set. Song metadata is cached in Redis Hashes to avoid MongoDB reads on every leaderboard render.
 
