@@ -1,6 +1,6 @@
 # StreamIQ — Redis Extension (Project 3)
 
-### CS3200 Project 3: Design & Implement a Key-Value In-Memory Database
+###Project 3: Design & Implement a Key-Value In-Memory Database
 
 StreamIQ is a music streaming platform. This project extends the MongoDB database from Project 2 with a **Redis in-memory key-value store** for real-time song play tracking and leaderboard functionality.
 
