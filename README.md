@@ -1,4 +1,4 @@
-# StreamIQ — Redis Extension (Project 3)
+# StreamIQ - Redis Extension (Project 3)
 
 ###Project 3: Design & Implement a Key-Value In-Memory Database
 
